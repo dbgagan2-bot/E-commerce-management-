@@ -1,0 +1,220 @@
+// src/components/Navbar.tsx
+interface NavbarProps {
+  cartCount: number;
+  onCartOpen: () => void;
+  onNavClick: (page: string) => void;
+  userName: string;
+  onLogout: () => void;
+}
+
+export default function Navbar({
+  cartCount,
+  onCartOpen,
+  onNavClick,
+  userName,
+  onLogout,
+}: NavbarProps) {
+  return (
+    <nav
+      style={{
+        height: 64,
+        background: "var(--surface)",
+        borderBottom: "1px solid var(--border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 28px",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+      }}
+    >
+      {/* ── LOGO ── */}
+      <div
+        style={{ cursor: "pointer" }}
+        onClick={() => onNavClick("shop")}
+      >
+        <div
+          style={{
+            fontFamily: "'Syne',sans-serif",
+            fontSize: 22,
+            fontWeight: 800,
+            color: "var(--accent)",
+          }}
+        >
+          🌾 AgroSupply
+        </div>
+        <div
+          style={{
+            fontSize: 11,
+            color: "var(--muted)",
+            letterSpacing: 2,
+            textTransform: "uppercase",
+          }}
+        >
+          Agricultural Inputs Store
+        </div>
+      </div>
+
+      {/* ── NAV LINKS ── */}
+      <div style={{ display: "flex", gap: 6 }}>
+        {[
+          { label: "📋 Catalog",     page: "catalog" },
+          { label: "🏷️ Bulk Orders", page: "bulk"    },
+          { label: "📞 Support",     page: "support" },
+        ].map(({ label, page }) => (
+          <button
+            key={page}
+            onClick={() => onNavClick(page)}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 6,
+              border: "1px solid var(--border)",
+              background: "transparent",
+              color: "var(--muted)",
+              fontFamily: "'Outfit',sans-serif",
+              fontSize: 13,
+              cursor: "pointer",
+              transition: "all 0.18s",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── RIGHT SIDE ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+
+        {/* User Avatar + Name */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "6px 14px",
+            borderRadius: 8,
+            background: "var(--surface2)",
+            border: "1px solid var(--border)",
+          }}
+        >
+          {/* Avatar circle with first letter */}
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              background: "var(--accent)",
+              color: "#0d1f0f",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 13,
+              fontWeight: 800,
+              fontFamily: "'Syne',sans-serif",
+              flexShrink: 0,
+            }}
+          >
+            {userName.charAt(0).toUpperCase()}
+          </div>
+          {/* Username text */}
+          <span
+            style={{
+              fontSize: 13,
+              color: "var(--text)",
+              fontWeight: 500,
+              maxWidth: 120,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {userName}
+          </span>
+        </div>
+
+        {/* Cart Button */}
+        <button
+          onClick={onCartOpen}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "9px 18px",
+            borderRadius: 8,
+            border: "1px solid var(--accent)",
+            background: "transparent",
+            color: "var(--accent)",
+            fontFamily: "'Outfit',sans-serif",
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.18s",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
+            (e.currentTarget as HTMLButtonElement).style.color = "#0d1f0f";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
+          }}
+        >
+          🛒 Cart
+          {cartCount > 0 && (
+            <span
+              style={{
+                background: "var(--accent2)",
+                color: "#0d1f0f",
+                borderRadius: "50%",
+                width: 20,
+                height: 20,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+            >
+              {cartCount}
+            </span>
+          )}
+        </button>
+
+        {/* Logout Button */}
+        <button
+          onClick={onLogout}
+          style={{
+            padding: "9px 14px",
+            borderRadius: 8,
+            border: "1px solid var(--border)",
+            background: "transparent",
+            color: "var(--muted)",
+            fontFamily: "'Outfit',sans-serif",
+            fontSize: 13,
+            cursor: "pointer",
+            transition: "all 0.18s",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.color = "#ff6b6b";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "#ff6b6b";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+          }}
+        >
+          🚪 Logout
+        </button>
+      </div>
+    </nav>
+  );
+}
