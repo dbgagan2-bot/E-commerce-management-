@@ -3,6 +3,8 @@ interface NavbarProps {
   cartCount: number;
   onCartOpen: () => void;
   onNavClick: (page: string) => void;
+  userName: string;       // ← fix: capital N
+  onLogout: () => void;
 }
 
 export default function Navbar({ cartCount, onCartOpen, onNavClick }: NavbarProps) {

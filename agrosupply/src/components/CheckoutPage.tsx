@@ -1,5 +1,6 @@
 // src/components/CheckoutPage.tsx
 import type { CartItem } from "../types";
+import { toINR } from "../utils/currency";
 
 interface Props {
   cart: CartItem[];
@@ -75,18 +76,18 @@ export default function CheckoutPage({ cart, onBack, onConfirm }: Props) {
                   <span style={{ fontSize: 22 }}>{item.icon}</span>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{item.name}</div>
-                    <div style={{ fontSize: 11, color: "var(--muted)" }}>Qty: {item.qty} × ${item.price.toFixed(2)}</div>
+                    <div style={{ fontSize: 11, color: "var(--muted)" }}>Qty: {item.qty} × {toINR(item.price)}</div>
                   </div>
                 </div>
                 <span style={{ fontSize: 14, fontWeight: 700, color: "var(--accent)" }}>
-                  ${(item.price * item.qty).toFixed(2)}
+                  {toINR(item.price * item.qty)}
                 </span>
               </div>
             ))}
             <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 6 }}>
               {[
-                ["Subtotal", `$${subtotal.toFixed(2)}`],
-                ["Shipping", subtotal >= 150 ? "FREE" : "$12.00"],
+                ["Subtotal", toINR(subtotal)],
+                ["Shipping", subtotal >= 150 ? "FREE" : toINR(12)],
               ].map(([l, v]) => (
                 <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--muted)" }}>
                   <span>{l}</span>
@@ -95,7 +96,7 @@ export default function CheckoutPage({ cart, onBack, onConfirm }: Props) {
               ))}
               <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 10, borderTop: "1px solid var(--border)", marginTop: 4 }}>
                 <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 16, fontWeight: 800, color: "var(--text)" }}>Total</span>
-                <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color: "var(--accent)" }}>${total.toFixed(2)}</span>
+                <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color: "var(--accent)" }}>{toINR(total)}</span>
               </div>
             </div>
           </div>
@@ -126,7 +127,7 @@ export default function CheckoutPage({ cart, onBack, onConfirm }: Props) {
             onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
             onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
           >
-            ✅ Confirm Order — ${total.toFixed(2)}
+            ✅ Confirm Order — {toINR(total)}
           </button>
         </div>
       </div>

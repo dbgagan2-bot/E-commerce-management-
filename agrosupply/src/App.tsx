@@ -1,220 +1,227 @@
-// src/components/Navbar.tsx
-interface NavbarProps {
-  cartCount: number;
-  onCartOpen: () => void;
-  onNavClick: (page: string) => void;
-  userName: string;
-  onLogout: () => void;
-}
+// src/App.tsx
+import { useState } from "react";
+import type { Product, CartItem } from "./types";
+import { PRODUCTS, CATEGORIES } from "./data/products";
+import AuthPage from "./components/AuthPage";
+import Navbar from "./components/Navbar";
+import HeroStrip from "./components/HeroStrip";
+import Toolbar from "./components/Toolbar";
+import ProductCard from "./components/ProductCard";
+import CartPanel from "./components/CartPanel";
+import Toast from "./components/Toast";
+import CheckoutPage from "./components/CheckoutPage";
+import InfoPage from "./components/InfoPage";
 
-export default function Navbar({
-  cartCount,
-  onCartOpen,
-  onNavClick,
-  userName,
-  onLogout,
-}: NavbarProps) {
+type Page = "shop" | "checkout" | "catalog" | "bulk" | "support" | "success";
+
+export default function App() {
+  const [page, setPage] = useState<Page>("shop");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
+
+  const filtered = PRODUCTS
+    .filter(p => activeCategory === "All" || p.category === activeCategory)
+    .filter(p =>
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.brand.toLowerCase().includes(search.toLowerCase()) ||
+      p.subcategory.toLowerCase().includes(search.toLowerCase()) ||
+      p.sku.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      if (sortBy === "rating") return b.rating - a.rating;
+      return b.reviews - a.reviews;
+    });
+
+  const addToCart = (product: Product) => {
+    setCart(prev => {
+      const ex = prev.find(c => c.id === product.id);
+      if (ex) return prev.map(c =>
+        c.id === product.id ? { ...c, qty: c.qty + 1 } : c
+      );
+      return [...prev, { ...product, qty: 1 }];
+    });
+    setToast(`${product.icon} ${product.name} added to cart`);
+    setTimeout(() => setToast(null), 2200);
+  };
+
+  const handleBuyNow = (product: Product) => {
+    setBuyNowItem({ ...product, qty: 1 });
+    setCartOpen(true);
+  };
+
+  const handleConfirmOrder = () => {
+    setCart([]);
+    setBuyNowItem(null);
+    setCartOpen(false);
+    setPage("success");
+  };
+
+  const handleNavClick = (p: string) => {
+    setCartOpen(false);
+    setPage(p as Page);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserName("");
+    setCart([]);
+    setBuyNowItem(null);
+    setCartOpen(false);
+    setPage("shop");
+  };
+
+  const cartCount = cart.reduce((s, c) => s + c.qty, 0);
+
+  // ── Auth Gate ──────────────────────────────────────────
+  if (!isLoggedIn) {
+    return (
+      <AuthPage
+        onLogin={(name, _email) => {
+          setUserName(name);
+          setIsLoggedIn(true);
+        }}
+      />
+    );
+  }
+
+  // ── Checkout Page ──────────────────────────────────────
+  if (page === "checkout") {
+    const checkoutItems = buyNowItem ? [buyNowItem] : cart;
+    return (
+      <>
+        <Navbar
+          cartCount={cartCount}
+          onCartOpen={() => setCartOpen(true)}
+          onNavClick={handleNavClick}
+          userName={userName}
+          onLogout={handleLogout}
+        />
+        <CheckoutPage
+          cart={checkoutItems}
+          onBack={() => { setBuyNowItem(null); setPage("shop"); }}
+          onConfirm={handleConfirmOrder}
+        />
+      </>
+    );
+  }
+
+  // ── Info Pages ─────────────────────────────────────────
+  if (
+    page === "catalog" ||
+    page === "bulk"    ||
+    page === "support" ||
+    page === "success"
+  ) {
+    return (
+      <>
+        <Navbar
+          cartCount={cartCount}
+          onCartOpen={() => setCartOpen(true)}
+          onNavClick={handleNavClick}
+          userName={userName}
+          onLogout={handleLogout}
+        />
+        <InfoPage page={page} onBack={() => setPage("shop")} />
+      </>
+    );
+  }
+
+  // ── Shop Page ──────────────────────────────────────────
   return (
-    <nav
-      style={{
-        height: 64,
-        background: "var(--surface)",
-        borderBottom: "1px solid var(--border)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 28px",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-      }}
-    >
-      {/* ── LOGO ── */}
-      <div
-        style={{ cursor: "pointer" }}
-        onClick={() => onNavClick("shop")}
-      >
-        <div
-          style={{
-            fontFamily: "'Syne',sans-serif",
-            fontSize: 22,
-            fontWeight: 800,
-            color: "var(--accent)",
-          }}
-        >
-          🌾 AgroSupply
-        </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: "var(--muted)",
-            letterSpacing: 2,
-            textTransform: "uppercase",
-          }}
-        >
-          Agricultural Inputs Store
-        </div>
-      </div>
+    <>
+      <Navbar
+        cartCount={cartCount}
+        onCartOpen={() => setCartOpen(true)}
+        onNavClick={handleNavClick}
+        userName={userName}
+        onLogout={handleLogout}
+      />
+      <HeroStrip
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+        categories={CATEGORIES}
+      />
+      <Toolbar
+        search={search}
+        onSearch={setSearch}
+        sortBy={sortBy}
+        onSort={setSortBy}
+        resultCount={filtered.length}
+      />
 
-      {/* ── NAV LINKS ── */}
-      <div style={{ display: "flex", gap: 6 }}>
-        {[
-          { label: "📋 Catalog",     page: "catalog" },
-          { label: "🏷️ Bulk Orders", page: "bulk"    },
-          { label: "📞 Support",     page: "support" },
-        ].map(({ label, page }) => (
-          <button
-            key={page}
-            onClick={() => onNavClick(page)}
-            style={{
-              padding: "6px 14px",
-              borderRadius: 6,
-              border: "1px solid var(--border)",
-              background: "transparent",
-              color: "var(--muted)",
-              fontFamily: "'Outfit',sans-serif",
-              fontSize: 13,
-              cursor: "pointer",
-              transition: "all 0.18s",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* ── RIGHT SIDE ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-
-        {/* User Avatar + Name */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "6px 14px",
-            borderRadius: 8,
-            background: "var(--surface2)",
-            border: "1px solid var(--border)",
-          }}
-        >
-          {/* Avatar circle with first letter */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: "var(--accent)",
-              color: "#0d1f0f",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 13,
-              fontWeight: 800,
-              fontFamily: "'Syne',sans-serif",
-              flexShrink: 0,
-            }}
-          >
-            {userName.charAt(0).toUpperCase()}
+      <div style={{ padding: "0 28px 60px" }}>
+        {filtered.length === 0 ? (
+          <div style={{
+            textAlign: "center",
+            padding: "80px 20px",
+            color: "var(--muted)"
+          }}>
+            <div style={{ fontSize: 56, marginBottom: 14 }}>🔬</div>
+            <p>No products match your search.</p>
           </div>
-          {/* Username text */}
-          <span
-            style={{
-              fontSize: 13,
-              color: "var(--text)",
-              fontWeight: 500,
-              maxWidth: 120,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {userName}
-          </span>
-        </div>
-
-        {/* Cart Button */}
-        <button
-          onClick={onCartOpen}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "9px 18px",
-            borderRadius: 8,
-            border: "1px solid var(--accent)",
-            background: "transparent",
-            color: "var(--accent)",
-            fontFamily: "'Outfit',sans-serif",
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-            transition: "all 0.18s",
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
-            (e.currentTarget as HTMLButtonElement).style.color = "#0d1f0f";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
-          }}
-        >
-          🛒 Cart
-          {cartCount > 0 && (
-            <span
-              style={{
-                background: "var(--accent2)",
-                color: "#0d1f0f",
-                borderRadius: "50%",
-                width: 20,
-                height: 20,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 11,
-                fontWeight: 700,
-              }}
-            >
-              {cartCount}
-            </span>
-          )}
-        </button>
-
-        {/* Logout Button */}
-        <button
-          onClick={onLogout}
-          style={{
-            padding: "9px 14px",
-            borderRadius: 8,
-            border: "1px solid var(--border)",
-            background: "transparent",
-            color: "var(--muted)",
-            fontFamily: "'Outfit',sans-serif",
-            fontSize: 13,
-            cursor: "pointer",
-            transition: "all 0.18s",
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#ff6b6b";
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "#ff6b6b";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-          }}
-        >
-          🚪 Logout
-        </button>
+        ) : (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px,1fr))",
+            gap: 16
+          }}>
+            {filtered.map(p => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                onAddToCart={addToCart}
+                onBuyNow={handleBuyNow}
+              />
+            ))}
+          </div>
+        )}
       </div>
-    </nav>
+
+      {cartOpen && (
+        <CartPanel
+          cart={buyNowItem ? [buyNowItem] : cart}
+          isBuyNow={!!buyNowItem}
+          buyNowProduct={buyNowItem}
+          onClose={() => {
+            setCartOpen(false);
+            setBuyNowItem(null);
+          }}
+          onUpdateQty={(id, delta) => {
+            if (buyNowItem) {
+              setBuyNowItem(prev =>
+                prev ? { ...prev, qty: Math.max(1, prev.qty + delta) } : prev
+              );
+            } else {
+              setCart(prev => prev.map(c =>
+                c.id === id ? { ...c, qty: Math.max(1, c.qty + delta) } : c
+              ));
+            }
+          }}
+          onRemove={id => {
+            if (buyNowItem && buyNowItem.id === id) {
+              setBuyNowItem(null);
+              setCartOpen(false);
+            } else {
+              setCart(prev => prev.filter(c => c.id !== id));
+            }
+          }}
+          onCheckout={() => {
+            setCartOpen(false);
+            setPage("checkout");
+          }}
+        />
+      )}
+
+      {toast && <Toast message={toast} />}
+    </>
   );
 }

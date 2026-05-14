@@ -1,5 +1,6 @@
 // src/components/CartPanel.tsx
 import type { CartItem } from "../types";
+import { toINR } from "../utils/currency";
 
 interface Props {
   cart: CartItem[];
@@ -191,7 +192,7 @@ export default function CartPanel({
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 13, color: "var(--muted)" }}>
               <span>Shipping</span>
               <span style={total >= 150 ? { color: "var(--accent)" } : {}}>
-                {total >= 150 ? "FREE" : "$12.00"}
+                {total >= 150 ? "FREE" : toINR(12)}
               </span>
             </div>
 
@@ -206,14 +207,14 @@ export default function CartPanel({
                 fontFamily: "'Syne',sans-serif",
                 fontSize: 24, fontWeight: 800, color: "var(--accent)"
               }}>
-                ${(total + shipping).toFixed(2)}
+                {toINR(total + shipping)}
               </span>
             </div>
 
             {/* Free shipping nudge */}
             {total < 150 && (
               <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 12, textAlign: "center" }}>
-                Add ${(150 - total).toFixed(2)} more for free shipping
+                Add {toINR(150 - total)} more for free shipping
               </p>
             )}
 

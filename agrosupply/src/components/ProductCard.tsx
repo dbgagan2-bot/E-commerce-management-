@@ -1,6 +1,7 @@
 // src/components/ProductCard.tsx
 import { useState } from "react";
 import type{ Product } from "../types";
+import { toINR } from "../utils/currency";
 
 interface Props {
   product: Product;
@@ -105,7 +106,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
       <div style={{ padding: "12px 20px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color: "var(--accent)" }}>
-            ${product.price.toFixed(2)}
+            {toINR(product.price)}
           </span>
           <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 4 }}>/ {product.unit}</span>
           <div style={{ fontSize: 11, marginTop: 2, color: product.inStock < 40 ? "var(--accent2)" : "var(--accent)" }}>
