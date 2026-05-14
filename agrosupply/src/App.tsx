@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Product, CartItem } from "./types";
 import { PRODUCTS, CATEGORIES } from "./data/products";
 import AuthPage from "./components/AuthPage";
@@ -34,6 +34,20 @@ export default function App() {
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [savedUser, setSavedUser] = useState<SavedUser | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("agrosupply-user");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as SavedUser;
+        if (parsed && parsed.email && parsed.password && parsed.name) {
+          setSavedUser(parsed);
+        }
+      } catch {
+        localStorage.removeItem("agrosupply-user");
+      }
+    }
+  }, []);
 
 
   const filtered = PRODUCTS
@@ -73,7 +87,9 @@ export default function App() {
   };
 
   const handleRegister = (name: string, email: string, password: string) => {
-    setSavedUser({ name, email, password });
+    const user = { name, email, password };
+    setSavedUser(user);
+    localStorage.setItem("agrosupply-user", JSON.stringify(user));
   };
 
   const handleLogin = (name: string, _email: string) => {
