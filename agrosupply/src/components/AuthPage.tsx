@@ -2,10 +2,18 @@
 import { useState } from "react";
 
 interface Props {
+  savedUser: { name: string; email: string; password: string } | null;
   onLogin: (name: string, email: string) => void;
+  onRegister: (name: string, email: string, password: string) => void;
 }
 
-export default function AuthPage({ onLogin }: Props) {
+const DEFAULT_USER = {
+  name: "Agro Farmer",
+  email: "farm@example.com",
+  password: "agro1234",
+};
+
+export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,19 +25,32 @@ export default function AuthPage({ onLogin }: Props) {
 
   const handleSubmit = () => {
     setError("");
+    if (!email.includes("@")) return setError("Please enter a valid email address.");
+    if (!password) return setError("Please enter your password.");
+
     if (mode === "register") {
       if (!name.trim()) return setError("Please enter your full name.");
       if (!phone.trim()) return setError("Please enter your phone number.");
       if (password !== confirm) return setError("Passwords do not match.");
       if (password.length < 6) return setError("Password must be at least 6 characters.");
+
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        onRegister(name.trim(), email.trim(), password);
+      }, 1200);
+      return;
     }
-    if (!email.includes("@")) return setError("Please enter a valid email address.");
-    if (!password) return setError("Please enter your password.");
+
+    const user = savedUser ?? DEFAULT_USER;
+    if (email.trim() !== user.email || password !== user.password) {
+      return setError("Incorrect email or password. Please try again.");
+    }
 
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLogin(name || email.split("@")[0], email);
+      onLogin(user.name, user.email);
     }, 1200);
   };
 

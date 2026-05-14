@@ -13,6 +13,12 @@ import CheckoutPage from "./components/CheckoutPage";
 import InfoPage from "./components/InfoPage";
 import ProductDetails from "./components/ProductDetails";
 
+interface SavedUser {
+  name: string;
+  email: string;
+  password: string;
+}
+
 type Page = "shop" | "checkout" | "catalog" | "bulk" | "support" | "success";
 
 export default function App() {
@@ -27,6 +33,8 @@ export default function App() {
   const [userName, setUserName] = useState("");
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [savedUser, setSavedUser] = useState<SavedUser | null>(null);
+
 
   const filtered = PRODUCTS
     .filter(p => activeCategory === "All" || p.category === activeCategory)
@@ -64,6 +72,17 @@ export default function App() {
     setSelectedProduct(product);
   };
 
+  const handleRegister = (name: string, email: string, password: string) => {
+    setSavedUser({ name, email, password });
+    setUserName(name);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogin = (name: string, _email: string) => {
+    setUserName(name);
+    setIsLoggedIn(true);
+  };
+
   const handleConfirmOrder = () => {
     setCart([]);
     setBuyNowItem(null);
@@ -91,10 +110,9 @@ export default function App() {
   if (!isLoggedIn) {
     return (
       <AuthPage
-        onLogin={(name, _email) => {
-          setUserName(name);
-          setIsLoggedIn(true);
-        }}
+        savedUser={savedUser}
+        onLogin={handleLogin}
+        onRegister={handleRegister}
       />
     );
   }
