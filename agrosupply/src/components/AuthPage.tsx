@@ -21,10 +21,12 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
   const [confirm, setConfirm] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
     setError("");
+    setInfo("");
     if (!email.includes("@")) return setError("Please enter a valid email address.");
     if (!password) return setError("Please enter your password.");
 
@@ -38,6 +40,12 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
       setTimeout(() => {
         setLoading(false);
         onRegister(name.trim(), email.trim(), password);
+        setMode("login");
+        setEmail(email.trim());
+        setPassword("");
+        setConfirm("");
+        setPhone("");
+        setInfo("Registration successful. Please sign in with your new credentials.");
       }, 1200);
       return;
     }
@@ -283,6 +291,18 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
               display: "flex", alignItems: "center", gap: 8
             }}>
               ⚠ {error}
+            </div>
+          )}
+          {info && (
+            <div style={{
+              background: "rgba(76,175,80,0.1)",
+              border: "1px solid rgba(76,175,80,0.3)",
+              borderRadius: 8, padding: "10px 14px",
+              fontSize: 13, color: "#2d6a2d",
+              marginBottom: 16,
+              display: "flex", alignItems: "center", gap: 8
+            }}>
+              ✅ {info}
             </div>
           )}
 

@@ -74,8 +74,6 @@ export default function App() {
 
   const handleRegister = (name: string, email: string, password: string) => {
     setSavedUser({ name, email, password });
-    setUserName(name);
-    setIsLoggedIn(true);
   };
 
   const handleLogin = (name: string, _email: string) => {
