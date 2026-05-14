@@ -7,6 +7,7 @@ interface Props {
   product: Product;
   onAddToCart: (p: Product) => void;
   onBuyNow: (p: Product) => void;
+  onViewDetails: (p: Product) => void;
 }
 
 const CAT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -21,16 +22,10 @@ const Stars = ({ rating }: { rating: number }) => (
   </span>
 );
 
-export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
+export default function ProductCard({ product, onAddToCart, onBuyNow, onViewDetails }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [bought, setBought] = useState(false);
   const cat = CAT_COLORS[product.category];
-
-  const handleBuyNow = () => {
-    setBought(true);
-    onBuyNow(product);
-    setTimeout(() => setBought(false), 2000);
-  };
 
   return (
     <div
@@ -42,7 +37,9 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
         display: "flex",
         flexDirection: "column",
         transition: "border-color 0.2s, transform 0.2s",
+        cursor: "pointer",
       }}
+      onClick={() => onViewDetails(product)}
       onMouseEnter={e => {
         (e.currentTarget as HTMLDivElement).style.borderColor = "var(--accent)";
         (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
@@ -81,7 +78,10 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
           {product.description}
         </p>
         <button
-          onClick={() => setExpanded(!expanded)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
           style={{ background: "none", border: "none", color: "var(--accent)", fontSize: 12, cursor: "pointer", fontFamily: "'Outfit',sans-serif", fontWeight: 500, marginBottom: 8, padding: 0 }}
         >
           {expanded ? "▲ Hide specs" : "▼ View specs"}
@@ -117,7 +117,10 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
         </div>
         {/* Add to Cart */}
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart(product);
+          }}
           style={{
             padding: "9px 16px",
             borderRadius: 8,
@@ -146,7 +149,12 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: Props) {
       {/* ── BUY NOW BUTTON ── */}
       <div style={{ padding: "10px 20px 16px" }}>
         <button
-          onClick={handleBuyNow}
+          onClick={(e) => {
+            e.stopPropagation();
+            setBought(true);
+            onBuyNow(product);
+            setTimeout(() => setBought(false), 2000);
+          }}
           style={{
             width: "100%",
             padding: "11px",

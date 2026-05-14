@@ -16,7 +16,8 @@ export const PRODUCTS: Product[] = [
     description: "Broad-spectrum contact insecticide for aphids, thrips, and whiteflies.",
     specs: ["Active: Cypermethrin 10%", "Mode: Contact & Systemic", "Crops: Vegetables, Fruits", "PHI: 7 days"],
     inStock: 85, weight: "0.6 kg",
-    
+    usage: "Mix 2-3ml per liter of water and spray evenly on both sides of leaves. Apply early morning or late evening to avoid leaf burn. Repeat every 7-10 days if needed.",
+    dosage: "2-3ml per liter of water (1-1.5ml per acre)",
   },
   {
     id: 2, name: "FungoClear Fungicide",
@@ -26,7 +27,8 @@ export const PRODUCTS: Product[] = [
     description: "Systemic fungicide for powdery mildew, blight, and leaf spot.",
     specs: ["Active: Tebuconazole 25%", "Mode: Systemic", "Crops: Wheat, Tomato", "PHI: 14 days"],
     inStock: 60, weight: "1.1 kg",
-    
+    usage: "Dilute 1-2ml per liter of water and apply as foliar spray. Best applied preventively or at first sign of disease. Ensure complete coverage of leaves and stems.",
+    dosage: "1-2ml per liter of water (0.5-1ml per acre)",
   },
   {
     id: 3, name: "WeedOut Total Herbicide",
@@ -36,8 +38,8 @@ export const PRODUCTS: Product[] = [
     description: "Non-selective post-emergent herbicide for complete weed elimination.",
     specs: ["Active: Glyphosate 41%", "Mode: Systemic", "Application: Post-emergent", "Rain-fast: 4 hrs"],
     inStock: 120, weight: "1.2 kg",
-    
-    
+    usage: "Mix 5-10ml per liter of water for spot treatment or 20-30ml per 15L water for broadcast application. Avoid spraying on windy days and keep away from desirable plants.",
+    dosage: "5-10ml per liter for spot treatment (20-30ml per 15L for broadcast)",
   },
   {
     id: 4, name: "BioDefend Biopesticide",
@@ -47,7 +49,8 @@ export const PRODUCTS: Product[] = [
     description: "Neem-based biopesticide safe for beneficial insects and soil microbiome.",
     specs: ["Active: Azadirachtin 0.03%", "Mode: Repellent/IGR", "Crops: All crops", "PHI: 0 days"],
     inStock: 95, weight: "0.55 kg",
-    
+    usage: "Dilute 5-10ml per liter of water and spray thoroughly on all plant surfaces. Can be used up to harvest day. Safe for beneficial insects when used as directed.",
+    dosage: "5-10ml per liter of water (2.5-5ml per acre)",
   },
   {
     id: 5, name: "MiteAway Acaricide",
@@ -57,7 +60,8 @@ export const PRODUCTS: Product[] = [
     description: "Powerful miticide for spider mite and red mite infestations.",
     specs: ["Active: Abamectin 1.8%", "Mode: Contact & Translaminar", "Crops: Cotton, Vegetables", "PHI: 3 days"],
     inStock: 40, weight: "0.3 kg",
-    
+    usage: "Mix 1-2ml per liter of water and apply as fine mist to both leaf surfaces. Best applied in early morning. Repeat application after 7-10 days if needed.",
+    dosage: "1-2ml per liter of water (0.5-1ml per acre)",
   },
 
   // ── FERTILIZERS ─────────────────────────────────────
@@ -69,7 +73,8 @@ export const PRODUCTS: Product[] = [
     description: "Balanced water-soluble NPK fertilizer for all growth stages.",
     specs: ["N: 20% | P: 20% | K: 20%", "Form: Water Soluble", "pH: 5.5–6.5", "Crops: All crops"],
     inStock: 200, weight: "5 kg",
-    
+    usage: "Dissolve 50-100g per 100L water and apply through drip irrigation or foliar spray. Apply every 2-3 weeks during growing season for optimal results.",
+    dosage: "50-100g per 100L water (2-5kg per acre)",
   },
   {
     id: 7, name: "BloomBoost Phosphorus",
@@ -79,6 +84,8 @@ export const PRODUCTS: Product[] = [
     description: "High-phosphorus formula to promote root development and flowering.",
     specs: ["N: 5% | P: 52% | K: 10%", "Form: Granular", "Application: Basal", "Crops: Flowering crops"],
     inStock: 110, weight: "10 kg",
+    usage: "Apply directly to soil around plant roots or mix with soil before planting. For established plants, create small trenches around drip line and apply fertilizer.",
+    dosage: "5-10kg per acre (depending on soil test results)",
   },
   {
     id: 8, name: "SoilVita Organic Compost",
@@ -88,6 +95,8 @@ export const PRODUCTS: Product[] = [
     description: "Enriched compost with humic acid for long-term soil health.",
     specs: ["OM: 40%+", "Humic Acid: 8%", "Form: Granular", "Crops: All crops"],
     inStock: 75, weight: "25 kg",
+    usage: "Spread evenly over soil surface and incorporate into top 6-8 inches of soil. Can be applied year-round. Water thoroughly after application.",
+    dosage: "2-5 tons per acre (depending on soil condition)",
   },
   {
     id: 9, name: "MicroBoost Trace Elements",
@@ -97,6 +106,8 @@ export const PRODUCTS: Product[] = [
     description: "Chelated blend of Zn, Fe, Mn, Cu, Mo, B for micronutrient correction.",
     specs: ["Fe: 6% | Zn: 5% | Mn: 4%", "Form: Soluble Powder", "Application: Foliar/Drip", "pH: 4–7"],
     inStock: 145, weight: "1.1 kg",
+    usage: "Dissolve 10-20g per 100L water and apply as foliar spray or through drip system. Apply when plants show deficiency symptoms or as preventive measure.",
+    dosage: "10-20g per 100L water (100-200g per acre)",
   },
   {
     id: 10, name: "NitroMax Urea 46%",
@@ -106,6 +117,8 @@ export const PRODUCTS: Product[] = [
     description: "High-nitrogen urea prills for vegetative growth and green biomass.",
     specs: ["N: 46%", "Form: Prill/Granular", "Application: Broadcast", "Moisture: <0.5%"],
     inStock: 300, weight: "25 kg",
+    usage: "Broadcast evenly over field or apply in bands near plant rows. Incorporate into soil immediately after application. Avoid applying on dry soil.",
+    dosage: "50-100kg per acre (depending on crop requirement)",
   },
   {
     id: 11, name: "FoliarFeed Liquid Seaweed",
@@ -115,6 +128,8 @@ export const PRODUCTS: Product[] = [
     description: "Cold-processed seaweed extract rich in cytokinins and growth hormones.",
     specs: ["Seaweed Extract: 60%", "Auxins + Cytokinins", "Form: Liquid Concentrate", "Dilution: 1:500"],
     inStock: 55, weight: "1.1 kg",
+    usage: "Dilute 5-10ml per 10L water and spray on leaves until runoff. Apply every 2-4 weeks during growing season. Best applied early morning or late afternoon.",
+    dosage: "5-10ml per 10L water (0.5-1L per acre)",
   },
 
   // ── TOOLS & EQUIPMENT ───────────────────────────────
@@ -126,6 +141,8 @@ export const PRODUCTS: Product[] = [
     description: "Heavy-duty 16L backpack sprayer with brass nozzle and pressure gauge.",
     specs: ["Tank: 16L HDPE", "Pressure: 2–4 bar", "Nozzle: Brass adjustable", "Weight: 2.1 kg"],
     inStock: 45, weight: "2.1 kg",
+    usage: "Fill tank with prepared solution, adjust pressure to 2-3 bar, select appropriate nozzle for spray pattern. Pump handle to build pressure, then spray in sweeping motion covering all plant surfaces evenly.",
+    dosage: "Coverage: 1-2 acres per tank (depending on spray volume)",
   },
   {
     id: 13, name: "Soil pH & Moisture Meter",
@@ -135,6 +152,8 @@ export const PRODUCTS: Product[] = [
     description: "3-in-1 digital meter for soil pH, moisture, and sunlight intensity.",
     specs: ["pH Range: 3.5–9.0", "Moisture: 1–10 scale", "Light: 0–2000 Lux", "No battery needed"],
     inStock: 90, weight: "0.15 kg",
+    usage: "Insert probe 4-6 inches into soil. For pH testing, wait 10 seconds for reading. For moisture, wait 30 seconds. Clean probe after each use. Test multiple locations for accurate field assessment.",
+    dosage: "Test frequency: Weekly during growing season",
   },
   {
     id: 14, name: "Drip Irrigation Kit 100m",
@@ -144,5 +163,7 @@ export const PRODUCTS: Product[] = [
     description: "Complete drip system for 100m row with pressure-compensating emitters.",
     specs: ["Coverage: 100m row", "Emitter: 2L/hr PC", "Main pipe: 16mm PE", "Filter: 120 mesh"],
     inStock: 22, weight: "4.5 kg",
+    usage: "Lay main pipe along crop rows, connect lateral pipes with emitters spaced 30-60cm apart. Connect to water source with filter. Flush system before first use. Operate at 1-2 bar pressure for optimal emitter performance.",
+    dosage: "Flow rate: 2L/hour per emitter (adjust based on crop water needs)",
   },
 ];

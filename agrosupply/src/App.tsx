@@ -11,6 +11,7 @@ import CartPanel from "./components/CartPanel";
 import Toast from "./components/Toast";
 import CheckoutPage from "./components/CheckoutPage";
 import InfoPage from "./components/InfoPage";
+import ProductDetails from "./components/ProductDetails";
 
 type Page = "shop" | "checkout" | "catalog" | "bulk" | "support" | "success";
 
@@ -25,6 +26,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filtered = PRODUCTS
     .filter(p => activeCategory === "All" || p.category === activeCategory)
@@ -56,6 +58,10 @@ export default function App() {
   const handleBuyNow = (product: Product) => {
     setBuyNowItem({ ...product, qty: 1 });
     setCartOpen(true);
+  };
+
+  const handleViewDetails = (product: Product) => {
+    setSelectedProduct(product);
   };
 
   const handleConfirmOrder = () => {
@@ -180,6 +186,7 @@ export default function App() {
                 product={p}
                 onAddToCart={addToCart}
                 onBuyNow={handleBuyNow}
+                onViewDetails={handleViewDetails}
               />
             ))}
           </div>
@@ -218,6 +225,15 @@ export default function App() {
             setCartOpen(false);
             setPage("checkout");
           }}
+        />
+      )}
+
+      {selectedProduct && (
+        <ProductDetails
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onAddToCart={addToCart}
+          onBuyNow={handleBuyNow}
         />
       )}
 

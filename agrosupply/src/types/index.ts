@@ -17,6 +17,8 @@ export interface Product {
   specs: string[];
   inStock: number;
   weight: string;
+  usage?: string;
+  dosage?: string;
 }
 
 export interface CartItem extends Product {
