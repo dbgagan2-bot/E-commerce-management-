@@ -2,18 +2,11 @@
 import { useState } from "react";
 
 interface Props {
-  savedUser: { name: string; email: string; password: string } | null;
   onLogin: (name: string, email: string) => void;
   onRegister: (name: string, email: string, password: string) => void;
 }
 
-const DEFAULT_USER = {
-  name: "Agro Farmer",
-  email: "farm@example.com",
-  password: "agro1234",
-};
-
-export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
+export default function AuthPage({ onLogin, onRegister }: Props) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,15 +48,28 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
       return;
     }
 
-    const user = savedUser ?? DEFAULT_USER;
-    if (email.trim() !== user.email || password !== user.password) {
-      return setError("Incorrect email or password. Please try again.");
-    }
-
+    // Login via backend
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onLogin(user.name, user.email);
+    setTimeout(async () => {
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim(), password }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Login failed.");
+        }
+
+        const result = await response.json();
+        onLogin(result.name, result.email);
+      } catch (err) {
+        setError((err as Error).message || "Login failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }, 1200);
   };
 

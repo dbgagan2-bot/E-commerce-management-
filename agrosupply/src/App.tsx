@@ -167,7 +167,6 @@ export default function App() {
   if (!isLoggedIn) {
     return (
       <AuthPage
-        savedUser={savedUser}
         onLogin={handleLogin}
         onRegister={handleRegister}
       />
