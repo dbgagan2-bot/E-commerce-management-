@@ -11,12 +11,7 @@ import Toast from "./components/Toast";
 import CheckoutPage from "./components/CheckoutPage";
 import InfoPage from "./components/InfoPage";
 import ProductDetails from "./components/ProductDetails";
-
-interface SavedUser {
-  name: string;
-  email: string;
-  password: string;
-}
+import { PRODUCTS, CATEGORIES } from "./data/products";
 
 type Page = "shop" | "checkout" | "catalog" | "bulk" | "support" | "success";
 
@@ -32,25 +27,9 @@ export default function App() {
   const [userName, setUserName] = useState("");
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [savedUser, setSavedUser] = useState<SavedUser | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(["All"]);
   const [loadingProducts, setLoadingProducts] = useState(true);
-  const [dataError, setDataError] = useState("");
-
-  useEffect(() => {
-    const stored = localStorage.getItem("agrosupply-user");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as SavedUser;
-        if (parsed && parsed.email && parsed.password && parsed.name) {
-          setSavedUser(parsed);
-        }
-      } catch {
-        localStorage.removeItem("agrosupply-user");
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -70,8 +49,10 @@ export default function App() {
         setProducts(productsData);
         setCategories(["All", ...categoriesData.filter((item: string) => item !== "All")]);
       } catch (error) {
-        console.error(error);
-        setDataError("Unable to load products from the backend. Make sure the backend server is running.");
+        console.warn("Backend not available, using local data:", error);
+        // Fallback to local data
+        setProducts(PRODUCTS);
+        setCategories(["All", ...CATEGORIES.filter((item: string) => item !== "All")]);
       } finally {
         setLoadingProducts(false);
       }
@@ -129,10 +110,7 @@ export default function App() {
       throw new Error(error.message || "Registration failed.");
     }
 
-    const result = await response.json();
-    const user = { name: result.user.name, email: result.user.email, password };
-    setSavedUser(user);
-    localStorage.setItem("agrosupply-user", JSON.stringify(user));
+    // User registered successfully
   };
 
   const handleLogin = (name: string, _email: string) => {
@@ -177,16 +155,7 @@ export default function App() {
     return (
       <div style={{ padding: 32, textAlign: "center", color: "var(--muted)" }}>
         <div style={{ fontSize: 40, marginBottom: 18 }}>⏳</div>
-        <div>Loading product catalog from the backend...</div>
-      </div>
-    );
-  }
-
-  if (dataError) {
-    return (
-      <div style={{ padding: 32, textAlign: "center", color: "var(--muted)" }}>
-        <div style={{ fontSize: 40, marginBottom: 18 }}>⚠</div>
-        <div>{dataError}</div>
+        <div>Loading product catalog...</div>
       </div>
     );
   }
