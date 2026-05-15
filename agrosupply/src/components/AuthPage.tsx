@@ -154,26 +154,40 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
 
         {/* ── TAB TOGGLE ── */}
         <div style={{ display: "flex", borderBottom: "1px solid var(--border)" }}>
-          {(["login", "register"] as const).map(m => (
-            <button
-              key={m}
-              onClick={() => { setMode(m); setError(""); }}
-              style={{
-                flex: 1, padding: "14px 0",
-                border: "none", background: "transparent",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: 14, fontWeight: 700,
-                cursor: "pointer",
-                color: mode === m ? "var(--accent)" : "var(--muted)",
-                borderBottom: mode === m ? "2px solid var(--accent)" : "2px solid transparent",
-                transition: "all 0.18s",
-                textTransform: "capitalize",
-                letterSpacing: 0.5,
-              }}
-            >
-              {m === "login" ? "🔑 Sign In" : "📝 Register"}
-            </button>
-          ))}
+          <button
+            onClick={() => { setMode("login"); setError(""); }}
+            style={{
+              flex: 1, padding: "14px 0",
+              border: "none", background: "transparent",
+              fontFamily: "'Syne', sans-serif",
+              fontSize: 14, fontWeight: 700,
+              cursor: "pointer",
+              color: mode === "login" ? "var(--accent)" : "var(--muted)",
+              borderBottom: mode === "login" ? "2px solid var(--accent)" : "2px solid transparent",
+              transition: "all 0.18s",
+              textTransform: "capitalize",
+              letterSpacing: 0.5,
+            }}
+          >
+            🔑 Sign In
+          </button>
+          <button
+            onClick={() => { setMode("register"); setError(""); }}
+            style={{
+              flex: 1, padding: "14px 0",
+              border: "none", background: "transparent",
+              fontFamily: "'Syne', sans-serif",
+              fontSize: 14, fontWeight: 700,
+              cursor: "pointer",
+              color: mode === "register" ? "var(--accent)" : "var(--muted)",
+              borderBottom: mode === "register" ? "2px solid var(--accent)" : "2px solid transparent",
+              transition: "all 0.18s",
+              textTransform: "capitalize",
+              letterSpacing: 0.5,
+            }}
+          >
+            📝 Register
+          </button>
         </div>
 
         {/* ── FORM ── */}
