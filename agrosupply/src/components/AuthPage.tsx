@@ -24,7 +24,7 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError("");
     setInfo("");
     if (!email.includes("@")) return setError("Please enter a valid email address.");
@@ -37,15 +37,20 @@ export default function AuthPage({ savedUser, onLogin, onRegister }: Props) {
       if (password.length < 6) return setError("Password must be at least 6 characters.");
 
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        onRegister(name.trim(), email.trim(), password);
-        setMode("login");
-        setEmail(email.trim());
-        setPassword("");
-        setConfirm("");
-        setPhone("");
-        setInfo("Registration successful. Please sign in with your new credentials.");
+      setTimeout(async () => {
+        try {
+          await onRegister(name.trim(), email.trim(), password);
+          setMode("login");
+          setEmail(email.trim());
+          setPassword("");
+          setConfirm("");
+          setPhone("");
+          setInfo("Registration successful. Please sign in with your new credentials.");
+        } catch (err) {
+          setError((err as Error).message || "Registration failed. Please try again.");
+        } finally {
+          setLoading(false);
+        }
       }, 1200);
       return;
     }

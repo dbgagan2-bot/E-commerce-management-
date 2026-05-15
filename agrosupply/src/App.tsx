@@ -1,7 +1,6 @@
 // src/App.tsx
 import { useEffect, useState } from "react";
 import type { Product, CartItem } from "./types";
-import { PRODUCTS, CATEGORIES } from "./data/products";
 import AuthPage from "./components/AuthPage";
 import Navbar from "./components/Navbar";
 import HeroStrip from "./components/HeroStrip";
@@ -34,6 +33,10 @@ export default function App() {
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [savedUser, setSavedUser] = useState<SavedUser | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [dataError, setDataError] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem("agrosupply-user");
@@ -49,8 +52,36 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/categories"),
+        ]);
 
-  const filtered = PRODUCTS
+        if (!productsRes.ok || !categoriesRes.ok) {
+          throw new Error("Unable to load backend product data.");
+        }
+
+        const productsData = await productsRes.json();
+        const categoriesData = await categoriesRes.json();
+
+        setProducts(productsData);
+        setCategories(["All", ...categoriesData.filter((item: string) => item !== "All")]);
+      } catch (error) {
+        console.error(error);
+        setDataError("Unable to load products from the backend. Make sure the backend server is running.");
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+
+  const filtered = products
     .filter(p => activeCategory === "All" || p.category === activeCategory)
     .filter(p =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -86,8 +117,20 @@ export default function App() {
     setSelectedProduct(product);
   };
 
-  const handleRegister = (name: string, email: string, password: string) => {
-    const user = { name, email, password };
+  const handleRegister = async (name: string, email: string, password: string) => {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Registration failed.");
+    }
+
+    const result = await response.json();
+    const user = { name: result.user.name, email: result.user.email, password };
     setSavedUser(user);
     localStorage.setItem("agrosupply-user", JSON.stringify(user));
   };
@@ -128,6 +171,24 @@ export default function App() {
         onLogin={handleLogin}
         onRegister={handleRegister}
       />
+    );
+  }
+
+  if (loadingProducts) {
+    return (
+      <div style={{ padding: 32, textAlign: "center", color: "var(--muted)" }}>
+        <div style={{ fontSize: 40, marginBottom: 18 }}>⏳</div>
+        <div>Loading product catalog from the backend...</div>
+      </div>
+    );
+  }
+
+  if (dataError) {
+    return (
+      <div style={{ padding: 32, textAlign: "center", color: "var(--muted)" }}>
+        <div style={{ fontSize: 40, marginBottom: 18 }}>⚠</div>
+        <div>{dataError}</div>
+      </div>
     );
   }
 
@@ -186,7 +247,7 @@ export default function App() {
       <HeroStrip
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
-        categories={CATEGORIES}
+        categories={categories}
       />
       <Toolbar
         search={search}
