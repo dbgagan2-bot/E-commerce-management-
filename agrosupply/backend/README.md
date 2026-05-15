@@ -19,4 +19,11 @@ This backend provides a simple Express API for the AgroSupply frontend.
 
 ## Notes
 
-The frontend is configured to proxy `/api` to `http://localhost:4000` while running Vite.
+The frontend is configured to proxy `/api` to the backend URL from `VITE_BACKEND_URL`, or `http://localhost:4000` by default while running Vite.
+
+If port `4000` is already in use, start the backend on a different port and set the frontend proxy with:
+
+```bash
+set VITE_BACKEND_URL=http://localhost:4001
+npm run dev
+```

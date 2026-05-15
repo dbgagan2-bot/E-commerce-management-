@@ -83,6 +83,25 @@ app.use((req, res) => {
   res.status(404).json({ message: "Endpoint not found." });
 });
 
-app.listen(port, () => {
-  console.log(`AgroSupply backend running at http://localhost:${port}`);
-});
+const startServer = (listenPort) => {
+  const server = app.listen(listenPort, () => {
+    console.log(`AgroSupply backend running at http://localhost:${listenPort}`);
+  });
+
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      const nextPort = listenPort + 1;
+      if (listenPort === port) {
+        console.warn(`Port ${listenPort} is in use. Trying ${nextPort} instead...`);
+        startServer(nextPort);
+      } else {
+        console.error(`Port ${listenPort} is also in use. Please stop the running process or set PORT to a free port.`);
+        process.exit(1);
+      }
+    } else {
+      throw err;
+    }
+  });
+};
+
+startServer(port);

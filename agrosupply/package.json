@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -14,6 +16,7 @@
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
+    "concurrently": "^8.2.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
