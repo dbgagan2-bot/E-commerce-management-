@@ -17,6 +17,16 @@ export default function AuthPage({ onLogin, onRegister }: Props) {
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const parseJSONSafe = async (response: Response) => {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  };
+
   const handleSubmit = async () => {
     setError("");
     setInfo("");
@@ -59,11 +69,15 @@ export default function AuthPage({ onLogin, onRegister }: Props) {
         });
 
         if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || "Login failed.");
+          const error = await parseJSONSafe(response);
+          throw new Error(error?.message || response.statusText || "Login failed.");
         }
 
-        const result = await response.json();
+        const result = await parseJSONSafe(response);
+        if (!result) {
+          throw new Error("Login failed.");
+        }
+
         onLogin(result.name, result.email);
       } catch (err) {
         setError((err as Error).message || "Login failed. Please try again.");

@@ -89,6 +89,16 @@ export default function App() {
     setTimeout(() => setToast(null), 2200);
   };
 
+  const parseJSONSafe = async (response: Response) => {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  };
+
   const handleBuyNow = (product: Product) => {
     setBuyNowItem({ ...product, qty: 1 });
     setCartOpen(true);
@@ -106,8 +116,8 @@ export default function App() {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Registration failed.");
+      const error = await parseJSONSafe(response);
+      throw new Error(error?.message || response.statusText || "Registration failed.");
     }
 
     // User registered successfully
